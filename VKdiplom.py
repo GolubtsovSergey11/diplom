@@ -28,7 +28,7 @@ for ids in response['items']:
     groups_id.append(ids['id'])
 print(groups_id)
 
-output_dict = {}
+output_dict = []
 
 for ids in groups_id:
     time.sleep(0.4)
@@ -40,9 +40,11 @@ for ids in groups_id:
             #print(ids)
             print(res)
             for name in response['items']:
-                output_dict['name_group'] = name['name']
-                output_dict['id_group'] = name['id']
-                output_dict['members_count'] = res['response']['count']
+                output_dict_1 = {}
+                output_dict_1['name_group'] = name['name']
+                output_dict_1['id_group'] = name['id']
+                output_dict_1['members_count'] = res['response']['count']
+                output_dict.append(output_dict_1)
 
         else:
             continue
