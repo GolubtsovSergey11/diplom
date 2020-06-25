@@ -17,7 +17,8 @@ print(URL_to_get_token)
 TOKEN = '92109221aca3be40097356391136dfb27b712e35561537bc4ffbd5b6349b0d1921a43be2abc63c52c3f8e'
 
 #Получаем список групп
-params_groups = {'user_id': 19451240, 'access_token': TOKEN, 'extended': 1, 'v': 5.89}
+id_user = int(input('Введите id пользователя: '))
+params_groups = {'user_id': id_user, 'access_token': TOKEN, 'extended': 1, 'v': 5.89}
 response = requests.get('https://api.vk.com/method/groups.get', params_groups)
 #print(response.json())
 response = response.json()['response']
@@ -27,7 +28,6 @@ for ids in response['items']:
     string = 'https://vk.com/'
     groups_id.append(ids['id'])
     print(ids)
-#print(groups_id)
 
 without_friends = []
 
@@ -46,17 +46,14 @@ for ids in groups_id:
             continue
     except KeyError as KE:
         print(KE)
-#print(without_friends)
 output_dict = []
-for id_without_friends in without_friends:
-    for i in response['items']:
-        if i['id'] == id_without_friends:
-            output_dict_1 = {}
-            output_dict_1['name_group'] = i['name']
-            output_dict_1['id_group'] = i['id']
-            output_dict.append(output_dict_1)
-
-
+without_friends = set(without_friends)
+for i in response['items']:
+    if i['id'] in without_friends:
+        output_dict_1 = {}
+        output_dict_1['name_group'] = i['name']
+        output_dict_1['id_group'] = i['id']
+        output_dict.append(output_dict_1)
 
 with open('test.json', 'w', encoding='utf-8') as file:
     json.dump(output_dict, file, ensure_ascii=False, indent=2)
