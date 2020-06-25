@@ -14,44 +14,49 @@ params_dict = {
 URL_to_get_token = ('?'.join((OAUTH, urlencode(params_dict))))
 print(URL_to_get_token)
 
-TOKEN = '8979bcdfa9dff35611eb3adc56a2ddc371e9c83134b509b498c120a16e2378ebc4d7de68bd6e15f9f4acb'
+TOKEN = '92109221aca3be40097356391136dfb27b712e35561537bc4ffbd5b6349b0d1921a43be2abc63c52c3f8e'
 
 #Получаем список групп
 params_groups = {'user_id': 19451240, 'access_token': TOKEN, 'extended': 1, 'v': 5.89}
 response = requests.get('https://api.vk.com/method/groups.get', params_groups)
-print(response.json()['response']['items'])
+#print(response.json())
 response = response.json()['response']
 print(response)
 groups_id = []
 for ids in response['items']:
     string = 'https://vk.com/'
     groups_id.append(ids['id'])
-print(groups_id)
+    print(ids)
+#print(groups_id)
 
-output_dict = []
+without_friends = []
 
 for ids in groups_id:
     time.sleep(0.4)
     Params = {'group_id': ids, 'access_token': TOKEN, 'filter': 'friends', 'v': 5.89}
     res = requests.get('https://api.vk.com/method/groups.getMembers', Params)
     res = res.json()
+    #print(res)
     try:
-        if res['response']['count'] != 0:
-            #print(ids)
+        if res['response']['count'] == 0:
             print(res)
-            for name in response['items']:
-                output_dict_1 = {}
-                output_dict_1['name_group'] = name['name']
-                output_dict_1['id_group'] = name['id']
-                output_dict_1['members_count'] = res['response']['count']
-                output_dict.append(output_dict_1)
-
+            print(ids)
+            without_friends.append(ids)
         else:
             continue
     except KeyError as KE:
         print(KE)
+#print(without_friends)
+output_dict = []
+for id_without_friends in without_friends:
+    for i in response['items']:
+        if i['id'] == id_without_friends:
+            output_dict_1 = {}
+            output_dict_1['name_group'] = i['name']
+            output_dict_1['id_group'] = i['id']
+            output_dict.append(output_dict_1)
 
-print(output_dict)
+
 
 with open('test.json', 'w', encoding='utf-8') as file:
     json.dump(output_dict, file, ensure_ascii=False, indent=2)
